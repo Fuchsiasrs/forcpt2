@@ -1,0 +1,14 @@
+CIHAT VE HACLIlar - DIPLOMASI ASAMA 2
+
+Yapilan degisiklikler:
+1) Bakanin kralliklari birbirine dusurme diyaloglari Turkcelestirildi.
+2) Elci gonderme ve vasali vatana ihanetten yargilama seceneklerinin gorunen menu metinleri Turkcelestirildi.
+3) Bakan menusu uzerinden kralligin mevcut asker takviye sablonlarindan acemi (1.500), tecrubeli (3.000) ve seckin (5.000) birlik toplama secenekleri eklendi.
+4) Bakan uzerinden devriye birligi olusturma secenegi eklendi. Mevcut script_create_kingdom_party_if_below_limit ve pt_patrol_party sistemi kullanilir. Devriye 3 birim yaricapla gezer; var olan devriye siniri korunur.
+
+ONEMLI:
+- Bu paket Warband Module System kaynaklaridir.
+- Python 2.7 ve oyunun derleyicisi bu ortamda bulunmadigindan gercek Module System derlemesi yapilmamistir.
+- Once mevcut Module System ve mod klasorunun yedegini alin.
+- build_module.bat ile derleyin. Hata cikarsa tum hata metnini gonderin.
+- Asker toplama sabit ucretlidir; secenek kralligin reinforcement party template'ini oyuncu grubuna ekler.

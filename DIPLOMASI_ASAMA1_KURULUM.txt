@@ -1,0 +1,29 @@
+CIHAT VE HACILAR v6 - DIPLOMASI GENISLETME / ASAMA 1
+
+Bu paket, kullanicinin yukledigi Module System kaynaklari temel alinip hazirlanmistir.
+
+ASAMA 1: GIZLI KISKIRTMA SISTEMI
+- Bakan ile konusurken "I wish to secretly turn two kingdoms against each other" secenegi eklenir.
+- Once saldiracak krallik, sonra hedef krallik secilir.
+- Basari sansi: 40 + (Oyuncu Persuasion seviyesi x 5), en fazla %80.
+- Basarili olursa secilen ilk krallik, ikinci kralliga savas acar. Mevcut Diplomacy savas baslatma script'i kullanilir.
+- Basarisiz denemeden sonra ayni krallik cifti icin 3 oyun gunu beklenir. Baska ciftler denenebilir.
+- Bekleme suresi oyun ici 24 saatlik tetikleyicide azaltilir.
+
+DEGISTIRILEN DOSYALAR
+- module_constants.py
+- module_dialogs.py
+- module_simple_triggers.py
+
+KURULUM
+1. Modun ve Module System klasorunun yedegini alin.
+2. Bu arsivdeki "Modul System" klasorunu ayri bir yere cikarin veya yalnizca yukaridaki 3 dosyayi kendi kaynak klasorunuzdeki ayni dosyalarla degistirin.
+3. Module System'in build_module.bat dosyasini kendi bilgisayarinizdaki Python 2.7 yoluna gore calistirin.
+4. Derleme hatasi olursa hata metnini oldugu gibi gonderin; oyuna derlenmemis dosyalari kopyalamayin.
+5. Once yeni bir test kaydi acip deneyin. Mevcut kaydi yedeklemeden kullanmayin.
+
+ONEMLI TEST SINIRI
+Bu calisma ortaminda Python 2.7 bulunmadigi icin Warband'in resmi Module System derleyicisi calistirilamadi. Dosyalar kaynak duzeyinde degistirildi; derleme ve oyun ici test henuz onaylanmamistir.
+
+SONRAKI ASAMALAR
+Kahya (ekonomi), Kumandan (asker/garnizon) ve diger gorevli sistemleri bu ilk pakete dahil degildir. Bunlar mevcut mod yapisina gore ayri asamalarda eklenecektir.
