@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from header_game_menus import *
 from header_parties import *
 from header_items import *
@@ -34,6 +35,36 @@ from module_constants import *
 #
 # Note: The first Menu is the initial character creation menu.
 ####################################################################################################################
+
+def kc_envoy_options(max_slots=20):
+  options = []
+  for i in range(max_slots):
+    options.append(("kc_envoy_%d" % i,
+      [
+        (store_add, ":faction_no", kingdoms_begin, i),
+        (is_between, ":faction_no", kingdoms_begin, kingdoms_end),
+        (neq, ":faction_no", "$players_kingdom"),
+        (faction_slot_eq, ":faction_no", slot_faction_state, sfs_active),
+        (store_relation, reg1, "fac_player_supporters_faction", ":faction_no"),
+        (ge, reg1, 0),
+        (str_store_faction_name, s1, ":faction_no"),
+      ],
+      "@{s1} (ilişki: {reg1})",
+      [
+        (store_add, ":faction_no", kingdoms_begin, i),
+        (store_troop_gold, ":gold", "trp_player"),
+        (try_begin),
+          (ge, ":gold", 3000),
+          (troop_remove_gold, "trp_player", 3000),
+          (call_script, "script_change_player_relation_with_faction", ":faction_no", 10),
+          (str_store_faction_name, s1, ":faction_no"),
+          (display_message, "@Elçiniz {s1} krallığıyla ilişkileri geliştirdi.", 0x33CC33),
+        (else_try),
+          (display_message, "@Elçi göndermek için 3000 dinar gerekir."),
+        (try_end),
+        (jump_to_menu, "mnu_kingdom_council_envoy"),
+      ]))
+  return options
 
 game_menus = [
   ("start_game_0",menu_text_color(0xFF000000)|mnf_disable_all_keys,
@@ -4283,7 +4314,8 @@ game_menus = [
         ]),                
     
 	
-	  ("back_to_menu",[],"Back to camp menu.",
+	  ("kingdom_council_access",[(is_between, "$players_kingdom", kingdoms_begin, kingdoms_end)],"Krallık Konseyi - Şansölye, Kâhya, Casus ve Kumandan", [(jump_to_menu, "mnu_kingdom_council")]),
+      ("back_to_menu",[],"Back to camp menu.",
        [(jump_to_menu, "mnu_camp"),
         ]
        ),
@@ -23235,6 +23267,140 @@ The other clan chief a wily old man however had a suprise for the young man. Hav
       ]
   ),
   
+
+  ("kingdom_council", 0,
+   "Krallık konseyiniz toplandı. Hangi birimin hizmetinden yararlanmak istiyorsunuz?",
+   "none",
+   [],
+   [
+     ("kc_chancellor_peace", [], "Şansölye: düşman krallığa barış teklifi gönder",
+      [
+        (assign, ":target_faction", -1),
+        (try_for_range, ":faction_no", kingdoms_begin, kingdoms_end),
+          (eq, ":target_faction", -1),
+          (neq, ":faction_no", "$players_kingdom"),
+          (faction_slot_eq, ":faction_no", slot_faction_state, sfs_active),
+          (store_relation, ":relation", "fac_player_supporters_faction", ":faction_no"),
+          (lt, ":relation", 0),
+          (assign, ":target_faction", ":faction_no"),
+        (try_end),
+        (try_begin),
+          (ge, ":target_faction", 0),
+          (store_skill_level, ":persuasion", "skl_persuasion", "trp_player"),
+          (store_mul, ":chance", ":persuasion", 3),
+          (val_add, ":chance", 35),
+          (val_min, ":chance", 80),
+          (store_random_in_range, ":roll", 0, 100),
+          (try_begin),
+            (lt, ":roll", ":chance"),
+            (call_script, "script_diplomacy_start_peace_between_kingdoms", "$players_kingdom", ":target_faction", 1),
+            (display_message, "@Barış teklifi kabul edildi. Savaş sona erdi." , 0x33CC33),
+          (else_try),
+            (call_script, "script_change_player_relation_with_faction", ":target_faction", -3),
+            (str_store_faction_name, s1, ":target_faction"),
+            (display_message, "@{s1} krallığı barış teklifini reddetti. İlişkiler biraz kötüleşti." , 0xFF7777),
+          (try_end),
+        (else_try),
+          (display_message, "@Krallığınız şu anda başka bir etkin krallıkla savaş halinde değil."),
+        (try_end),
+        (jump_to_menu, "mnu_kingdom_council"),
+      ]),
+
+     ("kc_envoy", [], "Elçi: bir krallıkla ilişkileri geliştir (3000 dinar)",
+      [(jump_to_menu, "mnu_kingdom_council_envoy")]),
+
+     ("kc_spy_sabotage", [], "Casus ağı: düşman krallığında sabotaj düzenle (2000 dinar)",
+      [
+        (store_troop_gold, ":gold", "trp_player"),
+        (assign, ":target_faction", -1),
+        (try_for_range, ":faction_no", kingdoms_begin, kingdoms_end),
+          (eq, ":target_faction", -1),
+          (neq, ":faction_no", "$players_kingdom"),
+          (faction_slot_eq, ":faction_no", slot_faction_state, sfs_active),
+          (store_relation, ":relation", "fac_player_supporters_faction", ":faction_no"),
+          (lt, ":relation", 0),
+          (assign, ":target_faction", ":faction_no"),
+        (try_end),
+        (store_current_hours, ":hours"),
+        (store_add, ":next_spy_operation", "$g_kingdom_last_spy_hours", 72),
+        (try_begin),
+          (ge, ":gold", 2000),
+          (ge, ":target_faction", 0),
+          (this_or_next|eq, "$g_kingdom_last_spy_hours", 0),
+          (ge, ":hours", ":next_spy_operation"),
+          (troop_remove_gold, "trp_player", 2000),
+          (assign, "$g_kingdom_last_spy_hours", ":hours"),
+          (call_script, "script_kingdom_spy_sabotage", ":target_faction"),
+        (else_try),
+          (display_message, "@Bu operasyon için 2000 dinar, düşman krallık ve 72 saat bekleme süresi gerekir."),
+        (try_end),
+        (jump_to_menu, "mnu_kingdom_council"),
+      ]),
+
+     ("kc_tax_low", [], "Kâhya: düşük vergi belirle (haftalık 1 kat)",
+      [(assign, "$g_kingdom_tax_rate", 1), (display_message, "@Kâhya her hafta düşük vergi toplayacak."), (jump_to_menu, "mnu_kingdom_council")]),
+     ("kc_tax_normal", [], "Kâhya: normal vergi belirle (haftalık 2 kat)",
+      [(assign, "$g_kingdom_tax_rate", 2), (display_message, "@Kâhya her hafta normal vergi toplayacak."), (jump_to_menu, "mnu_kingdom_council")]),
+     ("kc_tax_high", [], "Kâhya: yüksek vergi belirle (haftalık 3 kat)",
+      [(assign, "$g_kingdom_tax_rate", 3), (display_message, "@Kâhya her hafta yüksek vergi toplayacak. Refah daha hızlı düşecek."), (jump_to_menu, "mnu_kingdom_council")]),
+     ("kc_tax_off", [], "Kâhya: kraliyet vergilerini durdur",
+      [(assign, "$g_kingdom_tax_rate", 0), (display_message, "@Haftalık kraliyet vergileri durduruldu."), (jump_to_menu, "mnu_kingdom_council")]),
+     ("kc_collect_taxes", [], "Kâhya: şahsen yönettiğin tımarların vergisini şimdi topla",
+      [(call_script, "script_kingdom_collect_taxes"), (jump_to_menu, "mnu_kingdom_council")]),
+     ("kc_invest", [], "Kâhya: şahsen yönettiğin bir tımara 5000 dinar yatırım yap",
+      [(call_script, "script_kingdom_invest_in_fief"), (jump_to_menu, "mnu_kingdom_council")]),
+
+     ("kc_commander_small", [], "Kumandan: kendi garnizonundan en fazla 10 asker aktar (asker başı 100 dinar)",
+      [(call_script, "script_kingdom_commander_recruit", 10), (jump_to_menu, "mnu_kingdom_council")]),
+     ("kc_commander_large", [], "Kumandan: kendi garnizonundan en fazla 25 asker aktar (asker başı 100 dinar)",
+      [(call_script, "script_kingdom_commander_recruit", 25), (jump_to_menu, "mnu_kingdom_council")]),
+
+     ("kc_war_council", [], "Savaş konseyi: müttefik lordlara ordunu takip etme emri ver",
+      [(call_script, "script_kingdom_order_lords_follow"), (jump_to_menu, "mnu_kingdom_council")]),
+     ("kc_internal_politics", [], "İç siyaset: lordlarınla ilişkileri güçlendir (5000 dinar)",
+      [(call_script, "script_kingdom_improve_internal_relations"), (jump_to_menu, "mnu_kingdom_council")]),
+
+     ("kc_patrol", [], "Devriyeler: mevcut kuralları koruyarak yeni krallık devriyesi oluştur",
+      [
+        (call_script, "script_create_kingdom_party_if_below_limit", "$players_kingdom", spt_patrol),
+        (assign, ":new_patrol", reg0),
+        (try_begin),
+          (ge, ":new_patrol", 0),
+          (party_get_position, pos1, ":new_patrol"),
+          (party_set_ai_behavior, ":new_patrol", ai_bhvr_patrol_location),
+          (party_set_ai_target_position, ":new_patrol", pos1),
+          (party_set_ai_patrol_radius, ":new_patrol", 3),
+          (party_set_flags, ":new_patrol", pf_default_behavior, 1),
+          (display_message, "@Yeni bir krallık devriyesi oluşturuldu." , 0x33CC33),
+        (else_try),
+          (display_message, "@Yeni devriye oluşturulamadı. Krallığın mevcut devriye sınırına ulaşılmış olabilir."),
+        (try_end),
+        (jump_to_menu, "mnu_kingdom_council"),
+      ]),
+     ("kc_caravan", [], "Ticaret: mevcut kurallarla kraliyet kervanı oluştur",
+      [
+        (call_script, "script_create_kingdom_party_if_below_limit", "$players_kingdom", spt_kingdom_caravan),
+        (try_begin),
+          (ge, reg0, 0),
+          (display_message, "@Kraliyet kervanı oluşturuldu." , 0x33CC33),
+        (else_try),
+          (display_message, "@Kraliyet kervanı oluşturulamadı. Şehirlerini ve kervan sınırını kontrol et."),
+        (try_end),
+        (jump_to_menu, "mnu_kingdom_council"),
+      ]),
+
+     ("kc_back", [], "Kamp işlemlerine dön", [(jump_to_menu, "mnu_camp_action_and_options")]),
+   ]),
+
+  ("kingdom_council_envoy", 0,
+   "Elçinizi hangi krallığa göndermek istiyorsunuz? (3000 dinar)",
+   "none",
+   [],
+   kc_envoy_options() + [
+     ("kc_envoy_back", [], "Geri dön", [(jump_to_menu, "mnu_kingdom_council")]),
+   ]
+  ),
+
  ]
 # modmerger_start version=201 type=2
 try:

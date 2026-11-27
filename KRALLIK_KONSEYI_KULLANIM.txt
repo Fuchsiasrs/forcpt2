@@ -1,0 +1,42 @@
+CIHAT VE HACLILAR - KRALLIK KONSEYI EKLENTISI
+
+KURULUM / ERISIM
+Kaynak paketi, yuklenen Modul System2.zip temel alinip genisletilmistir. Oyunda Kamp > Take an action > Krallik Konseyi seceneginden acilir. Menu, oyuncu etkin bir kralliga sahip oldugunda gorunur.
+
+EKLENEN CALISAN SISTEMLER
+1. SANSOLYE / DIPLOMASI
+   - Savastaki ilk uygun dusman kralliga, oyuncunun Persuasion becerisine gore basari sansi olan baris teklifi.
+   - Barista olunan ilk uygun kralliga ucretli elci gondererek iliski gelistirme.
+2. CASUSLUK
+   - Dusman kralligin rastgele surlu merkezinde erzak/refah sabotaji ve bir duzenli garnizon birligine kadar kayip verme.
+   - Operasyon maliyeti 2000 dinar, bekleme suresi 72 saat.
+3. KAHYA / EKONOMI
+   - Haftalik dusuk, normal ve yuksek vergi oranlari; vergi yalnizca oyuncunun dogrudan lord oldugu merkezlerden alinir.
+   - Manuel vergi toplama (yedi gunde bir) ve dogrudan sahip olunan bir merkeze yatirim.
+4. KUMANDAN
+   - Baskanin asker toplama sisteminden tamamen ayri calisir.
+   - Kumandan, oyuncunun dogrudan sahip oldugu kale/sehir garnizonundan en fazla 10 veya 25 duzenli askeri ana gruba aktarir. Asker basi 100 dinar alinir. Var olan askerler aktarilir; yeni birlik sablonu uretilmez.
+5. SAVAS KONSEYI
+   - Oyuncu kralliginin lord birliklerine oyuncu ordusunu takip etme emri verir.
+6. IC SIYASET
+   - 5000 dinar karsiliginda oyuncu kralliginin lordlariyla iliskiyi gelistirir.
+7. TICARET
+   - Mevcut krallik kervani olusturma fonksiyonunu kullanir.
+8. DEVRiYELER
+   - Mevcut devriye olusturma fonksiyonunu kullanir; mevcut sinir ve birlik takviyesi kurallarina dokunmaz.
+
+OZELLIKLE KORUNAN KODLAR
+- module_dialogs.py icindeki baskan/minister asker toplama secenekleri, fiyatlari (1500/3000/5000) ve mevcut party_add_template akisi degistirilmedi.
+- module_scripts.py icindeki script_create_kingdom_party_if_below_limit fonksiyonu degistirilmedi. Oyuncu kralligi icin 20, diger kralliklar icin merkez sayisina gore 1/2/3 devriye siniri aynen korunmustur.
+- module_scripts.py icindeki script_cf_create_kingdom_party fonksiyonu degistirilmedi. Oyuncu kralliginin devriye takviyesi (reinforcements_c iki kez + reinforcements_b), diger kralliklarin daha kucuk takviyesi aynen korunmustur.
+- module_party_templates.py dosyasi byte-byte aynen birakilmistir; pt_patrol_party ve diger devriye sablonlari degistirilmemistir.
+- Bakanin mevcut devriye olusturma diyalogu da degistirilmemistir.
+
+SINIRLAR / HENUZ EKLENMEYEN ALT OZELLIKLER
+Bu paket, onceki fikir listesindeki butun buyuk kategorilerin temel ve oyunda etkisi olan mekaniklerini ekler; ancak her alt fikrin tamamlandigi anlamina gelmez. Ozellikle otomatik ittifak/evlilik anlasmalari, haraç/tribut sistemi, lord ayartip taraf degistirtme, isyan cikarma, karsi-casusluk ve hedef secilebilir cok durakli ticaret rotalari bu surumde uygulanmamistir. Bunlar mevcut diplomasi ve lord AI yapisina daha derin entegrasyon gerektirir; calisiyormus gibi sunulmamistir.
+
+TEST DURUMU
+- Degistirilen Python kaynak dosyalari mevcut Python ayraciyla soz dizimi kontrolunden gecirilmistir.
+- Bu ortamda Python 2.7 ve Warband Module System resmi derleyicisi bulunmadigi icin resmi Module System derlemesi ve oyun ici test yapilmamistir.
+- module_dialogs.py dosyasinda, dosyanin UTF-8 kodlama bildirimiyle uyusmayan 18 adet eski Turkce tek-bayt karakteri UTF-8'e cevrilmistir. Diyalog akis mantigi degistirilmemistir.
+- Once mod klasorunun ve kayit dosyanizin yedegini alin; ilk denemeyi yeni bir test kaydinda yapin.

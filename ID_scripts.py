@@ -675,5 +675,11 @@ script_iliski_normal = 673
 script_bayrak_ve_trooplar_degissin = 674
 script_yangin_1 = 675
 script_yangin_2 = 676
+script_kingdom_spy_sabotage = 677
+script_kingdom_collect_taxes = 678
+script_kingdom_commander_recruit = 679
+script_kingdom_order_lords_follow = 680
+script_kingdom_improve_internal_relations = 681
+script_kingdom_invest_in_fief = 682
 
 

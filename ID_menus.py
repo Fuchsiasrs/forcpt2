@@ -393,3 +393,5 @@ menu_suyu_zehirledin = 391
 menu_tunel_kaz_ana = 392
 menu_cocuk_isim_degistir = 393
 menu_formation_picture_2 = 394
+menu_kingdom_council = 395
+menu_kingdom_council_envoy = 396

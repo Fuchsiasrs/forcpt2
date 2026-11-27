@@ -5191,6 +5191,32 @@ simple_triggers = [
          (party_set_slot, ":center_no", slot_center_has_academy, ":cur_troops"),
        (try_end),
     ]),
+  # Weekly royal tax collection. Tax rate is selected from the Kingdom Council.
+  (24 * 7,
+    [
+      (is_between, "$players_kingdom", kingdoms_begin, kingdoms_end),
+      (faction_slot_eq, "$players_kingdom", slot_faction_state, sfs_active),
+      (gt, "$g_kingdom_tax_rate", 0),
+      (assign, ":total_income", 0),
+      (try_for_range, ":center_no", centers_begin, centers_end),
+        (party_slot_eq, ":center_no", slot_town_lord, "trp_player"),
+        (store_faction_of_party, ":center_faction", ":center_no"),
+        (eq, ":center_faction", "fac_player_supporters_faction"),
+        (party_get_slot, ":prosperity", ":center_no", slot_town_prosperity),
+        (store_mul, ":income", ":prosperity", "$g_kingdom_tax_rate"),
+        (val_add, ":total_income", ":income"),
+        (val_sub, ":prosperity", "$g_kingdom_tax_rate"),
+        (val_max, ":prosperity", 0),
+        (party_set_slot, ":center_no", slot_town_prosperity, ":prosperity"),
+      (try_end),
+      (try_begin),
+        (gt, ":total_income", 0),
+        (troop_add_gold, "trp_player", ":total_income"),
+        (assign, reg0, ":total_income"),
+        (display_message, "@Weekly royal taxes have brought {reg0} denars into your treasury." , 0x33CC33),
+      (try_end),
+    ]),
+
 ]
 # modmerger_start version=201 type=2
 try:
